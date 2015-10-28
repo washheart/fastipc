@@ -1,0 +1,7 @@
+# ingnore all files
+*
+!.gitignore
+!FastIPC.dll
+!TestFastIPCClient.exe
+!TestFastIPCServer.exe
+!readme.txt

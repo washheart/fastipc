@@ -1,0 +1,6 @@
+# ingnore all files
+!.gitignore
+~*
+*.suo
+*.sdf
+*.opensdf

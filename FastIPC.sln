@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFastIPCServer", "TestFastIPCServer\TestFastIPCServer.vcxproj", "{930A4E3B-214C-4017-B3EC-FA5733082B17}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFastIPCClient", "TestFastIPCClient\TestFastIPCClient.vcxproj", "{B948DDC6-937F-4DF0-8960-DD77B678B67E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastIPC", "FastIPC\FastIPC.vcxproj", "{6BD8E842-723A-47BA-83A4-FA357465DC13}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{930A4E3B-214C-4017-B3EC-FA5733082B17}.Debug|Win32.ActiveCfg = Debug|Win32
+		{930A4E3B-214C-4017-B3EC-FA5733082B17}.Debug|Win32.Build.0 = Debug|Win32
+		{930A4E3B-214C-4017-B3EC-FA5733082B17}.Release|Win32.ActiveCfg = Release|Win32
+		{930A4E3B-214C-4017-B3EC-FA5733082B17}.Release|Win32.Build.0 = Release|Win32
+		{B948DDC6-937F-4DF0-8960-DD77B678B67E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B948DDC6-937F-4DF0-8960-DD77B678B67E}.Debug|Win32.Build.0 = Debug|Win32
+		{B948DDC6-937F-4DF0-8960-DD77B678B67E}.Release|Win32.ActiveCfg = Release|Win32
+		{B948DDC6-937F-4DF0-8960-DD77B678B67E}.Release|Win32.Build.0 = Release|Win32
+		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Debug|Win32.Build.0 = Debug|Win32
+		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Release|Win32.ActiveCfg = Release|Win32
+		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

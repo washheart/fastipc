@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{813edc5a-1c15-4613-aced-05d138c51554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\fastipc">
+      <UniqueIdentifier>{ee3e81de-dea2-434f-b7a7-3fcc9b51a598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\util">
+      <UniqueIdentifier>{60a3ad7d-5b60-49a0-94a1-7bf51bdff852}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\fastipc\Client.cpp">
+      <Filter>common\fastipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\fastipc\FastIPC.cpp">
+      <Filter>common\fastipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\fastipc\Server.cpp">
+      <Filter>common\fastipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\util\StrUtil.cpp">
+      <Filter>common\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\fastipc\Client.h">
+      <Filter>common\fastipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\fastipc\FastIPC.h">
+      <Filter>common\fastipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\fastipc\Server.h">
+      <Filter>common\fastipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\util\StrUtil.h">
+      <Filter>common\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
