@@ -47,7 +47,6 @@ class ServerReadListener :public fastipc::ReadListener{
 			}
 			delete tmp;
 		}
-		delete readed;
 	}
 };
 

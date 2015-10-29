@@ -13,22 +13,15 @@
 #ifndef FastIPC_Server_H
 #define FastIPC_Server_H
 
-//#ifdef EXPORTS 
-//#define EXPORTS __declspec(dllexport)  
-//#else  
-//#define EXPORTS __declspec(dllimport)  
-//#endif  
-
 #include <Windows.h>
 #include "FastIPC.h"
-//_declspec(dllexport) int add(int a, int b)
-//{
-//	return a + b;
-//} 
+
 namespace fastipc{
 	class _declspec(dllexport) ReadListener{
 	public:
-		virtual void onRead(MemBlock*	memBuf){}
+		// 当有服务端读取到数据后，会调用此方法通知等待者进行处理
+		// memBlock在分发后会由服务器销毁，外部调用者无需清理操作
+		virtual void onRead(MemBlock* memBlock){}
 	};
 
 	class  _declspec(dllexport) Server{

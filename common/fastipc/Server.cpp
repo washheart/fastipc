@@ -75,16 +75,23 @@ namespace fastipc{
 			DWORD dwWaitResult = WaitForSingleObject(evtWrited, INFINITE);// 等待写完事件
 			if (dwWaitResult == WAIT_OBJECT_0){
 				InterlockedCompareExchange(&memBuf->state, MEM_IS_BUSY, MEM_CAN_READ);// 通过原子操作来设置共享区的状态为读状态
-				MemBlock * rtn = new MemBlock();
-				rtn->dataLen = memBuf->dataLen;
-				rtn->msgType = memBuf->msgType;
-				rtn->data = (char *)malloc(memBuf->dataLen);
-				memcpy(rtn->data, memBuf->data, rtn->dataLen);
-				if (memBuf->msgType > MSG_TYPE_NORMAL){
-					ZeroMemory(rtn->packId, PACK_ID_LEN);
-					memcpy(rtn->packId, memBuf->packId, PACK_ID_LEN);
-				}
-				if (listener != NULL)listener->onRead(rtn);
+					MemBlock * rtn=NULL;
+					try{
+						rtn = new MemBlock();
+						rtn->dataLen = memBuf->dataLen;
+						rtn->msgType = memBuf->msgType;
+						rtn->data = (char *)malloc(memBuf->dataLen);
+						memcpy(rtn->data, memBuf->data, rtn->dataLen);
+						if (memBuf->msgType > MSG_TYPE_NORMAL){
+							ZeroMemory(rtn->packId, PACK_ID_LEN);
+							memcpy(rtn->packId, memBuf->packId, PACK_ID_LEN);
+						}
+						listener->onRead(rtn);
+						delete rtn;// 清理环境
+					}
+					catch (...){
+						delete rtn;// 清理环境
+					}
 				InterlockedExchange(&memBuf->state, MEM_CAN_WRITE);// 数据读取之后，设置为可写
 				SetEvent(evtReaded);
 			}

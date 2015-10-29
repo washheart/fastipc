@@ -42,8 +42,6 @@ DWORD startClientProcess(std::wstring clientExe, std::wstring serverName, DWORD 
 
 // 程序进入点
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR szCmdLine, int iCmdShow){
-
-
 	blockSize = 2048;// 
 	blockSize = 2;// 指定一个较小的缓存区空间，以便测试数据的分段传输
 
