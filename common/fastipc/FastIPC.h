@@ -25,7 +25,6 @@
 #define ERR_MappingOpen			302	// 服客户端打开映射文件失败
 #define ERR_MappingMap			303 // 服务器/客户端映射内存文件失败
 
-#define MEM_SIZE				4096// MemBuff结构中data的长度，即一次内存读写的长度
 #define PACK_ID_LEN				100	// MemBuff结构中packId的长度
 
 // 定义消息类型常量
@@ -40,15 +39,40 @@
 
 namespace fastipc{
 	// 定义共享内存区数据结构
-	struct _declspec(dllexport)  MemBuff{
-		volatile LONG	state = MEM_CAN_WRITE;	// 内存状态，初始状态为可写
+	struct MemBuff{
+
+		/// 内存状态，取值[MEM_CAN_WRITE，MEM_CAN_READ，MEM_IS_BUSY]
+		/// 初始状态为可写MEM_CAN_WRITE。
+		volatile LONG	state = MEM_CAN_WRITE;	
+
+		/// 定义消息的类型，取值[MSG_TYPE_NORMAL，MSG_TYPE_PART，MSG_TYPE_END]
+		/// 初始状态为可写MSG_TYPE_NORMAL。
 		LONG			msgType;
-		//LONG			packIdx;				// 由于不考虑发送失败后重发的问题，且发送时是顺序发送，所以可以必要packIdx变量。当一个大数据块被拆分时的索引：如果packIdx=-1,不用考虑组装问题
-		char			packId[PACK_ID_LEN];	// 当一个大数据块被拆分时接收放用来接收数据
+
+		/// 由于不考虑发送失败后重发的问题，且发送时是顺序发送，所以可以必要packIdx变量。
+		/// 当一个大数据块被拆分时的索引：如果packIdx=-1,不用考虑组装问题
+		//  LONG			packIdx;		
+
+		// 当一个大数据被拆分发送时，通过packId将拆分的块组织在一起，packId一般取uuid
+		char			packId[PACK_ID_LEN];	
+
+		/// 当前内存共享区中的有效数据的长度 
 		DWORD			dataLen;
-		char			data[MEM_SIZE];			// 待传输的数据
+
+		/// 待传输的数据。
+		/// 注意不要被这里的数组长度所困扰，实际传错的数据长度有Server、Client的blockSize来控制。
+		/// 这里利用数组是结构体最后一个元素的特点来实现动态数组的功能，以便Server和Client能指定缓存区大小。
+		char			data[1];				
 	};
 
+	// 定义数据读取后的数据结构，和MemBuf的主要区别在data是个指针（在本进程内用制作更好也方便）
+	struct _declspec(dllexport)  MemBlock{
+		LONG			msgType;
+		char			packId[PACK_ID_LEN];
+		DWORD			dataLen;
+		char*			data = NULL;
+		~MemBlock(){ if (data)delete[] data;/*清理申请的内存*/ }
+	};
 	/// 生成服务端名称，此名称用来创建读写事件和内存文件，在创建fastipc的服务端时使用
 	/// @return 返回生成的服务器名称，此处是生成一个uuid
 	_declspec(dllexport) 	std::wstring genServerName();

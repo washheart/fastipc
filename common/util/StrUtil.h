@@ -19,5 +19,6 @@ namespace jw{
 	_declspec(dllexport) char* GenerateGuid();
 	_declspec(dllexport) std::wstring GenerateGuidW();
 
+	_declspec(dllexport) long parseLong(const wstring &ws);
 }
 #endif

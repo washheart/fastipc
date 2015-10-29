@@ -43,4 +43,7 @@ namespace jw{
 		delete guidBuf;
 		return guid;
 	}
+	long parseLong(const wstring &ws){
+		return _wtol(LPTSTR(ws.c_str()));
+	}
 }

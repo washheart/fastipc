@@ -35,7 +35,7 @@ namespace fastipc{
 	bool Client::isStable(){
 		return memBuf != NULL;
 	};
-	int	Client::create(const std::wstring serverName/*服务器名称（根据此名称生成事件名称）*/){
+	int	Client::create(const std::wstring serverName, DWORD blockSize){
 		// 创建两个事件分别用于通知可读、可写
 		evtWrited = OpenEvent(EVENT_ALL_ACCESS, FALSE, LPTSTR(genWritedEventName(serverName).c_str()));
 		if (evtWrited == NULL || evtWrited == INVALID_HANDLE_VALUE)  return ERR_EventCreate_W;
@@ -44,30 +44,32 @@ namespace fastipc{
 		// 打开内存映射文件
 		mapFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, (genMappingFileName(serverName).c_str()));
 		if (mapFile == NULL || mapFile == INVALID_HANDLE_VALUE)return ERR_MappingOpen;
-		memBuf = (MemBuff*)MapViewOfFile(mapFile, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(MemBuff));
+		DWORD size = sizeof(MemBuff)+sizeof(char)*blockSize;// 动态加长blockSize个字节
+		memBuf = (MemBuff*)MapViewOfFile(mapFile, FILE_MAP_ALL_ACCESS, 0, 0, size);
 		if (memBuf == NULL) { return ERR_MappingMap; }
+		this->blockSize = blockSize;
 		return 0;
 	};
 
 	DWORD Client::write(char *pBuff, DWORD len){
 		if (!memBuf)return ERR_ClientCreate;
-		if (len <= MEM_SIZE)return writeBlock(pBuff, len, NULL, MSG_TYPE_NORMAL); // 可以一次性写完
-		DWORD idx = 0, tmp = len%MEM_SIZE;
+		if (len <= blockSize)return writeBlock(pBuff, len, NULL, MSG_TYPE_NORMAL); // 可以一次性写完
+		DWORD idx = 0, tmp = len%blockSize;
 		DWORD result = -1;
 		len = len - tmp;
 		char * id = jw::GenerateGuid();
-		len = len - MEM_SIZE;// 多减一次，避免在while循环内判断是否是最后的数据包
+		len = len - blockSize;// 多减一次，避免在while循环内判断是否是最后的数据包
 		while (idx < len){// 将数据分为多个包来写
-			result = writeBlock(pBuff + idx, MEM_SIZE, id, MSG_TYPE_PART);
+			result = writeBlock(pBuff + idx, blockSize, id, MSG_TYPE_PART);
 			if (result != 0)return result;
-			idx += MEM_SIZE;
+			idx += blockSize;
 		}
 		if (tmp == 0){// 正好被分为多个完整的数据包
-			result = writeBlock(pBuff + len, MEM_SIZE, id, MSG_TYPE_END); // 发送最后一个包，以及结束标记
+			result = writeBlock(pBuff + len, blockSize, id, MSG_TYPE_END); // 发送最后一个包，以及结束标记
 		}
 		else{
-			result = writeBlock(pBuff + len, MEM_SIZE, id, MSG_TYPE_PART); // 发送倒数第二个完整包，以及继续标记
-			result = writeBlock(pBuff + len + MEM_SIZE, tmp, id, MSG_TYPE_END); //发送剩余的包，以及结束标记
+			result = writeBlock(pBuff + len, blockSize, id, MSG_TYPE_PART); // 发送倒数第二个完整包，以及继续标记
+			result = writeBlock(pBuff + len + blockSize, tmp, id, MSG_TYPE_END); //发送剩余的包，以及结束标记
 		}
 		delete id;
 		return 0;

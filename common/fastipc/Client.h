@@ -24,12 +24,14 @@ namespace fastipc{
 		HANDLE		evtReaded;		// 定义一个事件：读操作已完成，可以写了
 		HANDLE		mapFile;		// 内存映射文件句柄
 		MemBuff*	memBuf;			// 共享在内存的数据结构
+		DWORD		blockSize = 2;	// 设置memBuf.data的空间长度
 
 	public:
 		/// 创建服务器
 		/// @param serverName 服务器名称
+		/// @param blockSize 设置memBuf.data的空间长度，默认是2048，即1024个汉字
 		/// @return 0=成功；其他值表示失败，具体常量参见FastIPC.h中的ERR_*常量
-		int	create(const std::wstring/*服务器名称（根据此名称生成事件名称）*/);
+		int	create(const std::wstring, DWORD blockSize);
 
 		/// 关闭客户端
 		void close(void);

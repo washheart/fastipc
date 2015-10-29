@@ -11,17 +11,17 @@ std::wstring serverName;	// 服务端名称
 fastipc::Server server;     // IPC服务端
 fastipc::Client client;		// IPC客户端
 std::stringstream blocks;	// 当一个大数据被分成多块时，这里用来临时缓存每块的数据
-
+DWORD blockSize = 10;		// 一次传输时的数据大小
 DWORD sendMsg(std::wstring msg){
 	if (!client.isStable()){// 检查client是否已经初始化
-		client.create(fastipc::genServerName(serverName));// 初始化client
+		client.create(fastipc::genServerName(serverName), blockSize);// 初始化client
 	}
 	std::string s = jw::w2s(msg);
 	return client.write(LPSTR(s.c_str()), s.size());// 发送消息到服务端
 }
 
 class ServerReadListener :public fastipc::ReadListener{
-	void onRead(fastipc::MemBuff* readed) override{
+	void onRead(fastipc::MemBlock* readed) override{
 		if (readed->dataLen > 0){
 			int len = readed->dataLen;
 			char * tmp;

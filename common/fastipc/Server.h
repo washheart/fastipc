@@ -28,7 +28,7 @@
 namespace fastipc{
 	class _declspec(dllexport) ReadListener{
 	public:
-		virtual void onRead(MemBuff*	memBuf){}
+		virtual void onRead(MemBlock*	memBuf){}
 	};
 
 	class  _declspec(dllexport) Server{
@@ -37,16 +37,18 @@ namespace fastipc{
 		~Server();
 
 	private:
-		HANDLE		evtWrited;		// 定义一个事件：写操作已完成，可以读了
-		HANDLE		evtReaded;		// 定义一个事件：读操作已完成，可以写了
-		HANDLE		mapFile;		// 内存映射文件句柄
-		MemBuff*	memBuf;			// 共享在内存的数据结构
-		ReadListener* listener;		// 侦听读事件，并进行处理
+		HANDLE			evtWrited;	// 定义一个事件：写操作已完成，可以读了
+		HANDLE			evtReaded;	// 定义一个事件：读操作已完成，可以写了
+		HANDLE			mapFile;	// 内存映射文件句柄
+		MemBuff*		memBuf;		// 共享在内存的数据结构
+		//DWORD			blockSize;	// 设置memBuf.data的空间长度
+		ReadListener*	listener;	// 侦听读事件，并进行处理
 	public:
 		/// 创建服务器
 		/// @param serverName 服务器名称
+		/// @param blockSize 设置memBuf.data的空间长度，默认是2048，即1024个汉字
 		/// @return 0=成功；其他值表示失败，具体常量参见FastIPC.h中的ERR_*常量
-		int	 create(const std::wstring serverName);
+		int	create(const std::wstring serverName, DWORD blockSize);
 
 		/// 关闭服务器
 		void close(void);

@@ -40,9 +40,7 @@ namespace fastipc{
 	bool Server::isStable(){
 		return memBuf != NULL;
 	};
-	int Server::create(const std::wstring serverName)
-	{
-		//this->serverName = name;
+	int Server::create(const std::wstring serverName, DWORD blockSize){
 		// 创建两个事件分别用于通知可读、可写
 		evtWrited = CreateEvent(NULL, FALSE, FALSE, LPTSTR(genWritedEventName(serverName).c_str()));
 		if (evtWrited == NULL || evtWrited == INVALID_HANDLE_VALUE)  return ERR_EventOpen_W;
@@ -50,21 +48,21 @@ namespace fastipc{
 		if (evtReaded == NULL || evtReaded == INVALID_HANDLE_VALUE) return ERR_EventOpen_R;
 
 		// 创建内存映射文件
+		DWORD size = sizeof(MemBuff)+sizeof(char)*blockSize;// 动态加长blockSize个字节
 		mapFile = CreateFileMapping(INVALID_HANDLE_VALUE,	// 创建一个与物理文件无关的映射文件
 			NULL,											// 安全设置
 			PAGE_READWRITE,									// 打开方式
 			0,												// 文件映射的最大长度的高32位。
-			sizeof(MemBuff),								// 文件映射的最大长度的低32位。
+			size,											// 文件映射的最大长度的低32位。
 			LPTSTR(genMappingFileName(serverName).c_str()));// 映射文件的名称
 		if (mapFile == NULL || mapFile == INVALID_HANDLE_VALUE)  return ERR_MappingCreate;
-
 		// 映射文件到内存
 		memBuf = (MemBuff*)MapViewOfFile(mapFile,			// 映射文件句柄
 			FILE_MAP_ALL_ACCESS,							// 读写权限
 			0, 0,											// 映射起始偏移的高、低32位
-			sizeof(MemBuff));								// 指定映射文件的字节数
+			size);											// 指定映射文件的字节数
 		if (memBuf == NULL)return ERR_MappingMap;			// 映射文件失败
-		ZeroMemory(memBuf, sizeof(MemBuff));				// 清空缓冲区
+		ZeroMemory(memBuf, size);							// 清空缓冲区
 		return 0;
 	};
 
@@ -77,9 +75,10 @@ namespace fastipc{
 			DWORD dwWaitResult = WaitForSingleObject(evtWrited, INFINITE);// 等待写完事件
 			if (dwWaitResult == WAIT_OBJECT_0){
 				InterlockedCompareExchange(&memBuf->state, MEM_IS_BUSY, MEM_CAN_READ);// 通过原子操作来设置共享区的状态为读状态
-				MemBuff * rtn = new MemBuff();
+				MemBlock * rtn = new MemBlock();
 				rtn->dataLen = memBuf->dataLen;
 				rtn->msgType = memBuf->msgType;
+				rtn->data = (char *)malloc(memBuf->dataLen);
 				memcpy(rtn->data, memBuf->data, rtn->dataLen);
 				if (memBuf->msgType > MSG_TYPE_NORMAL){
 					ZeroMemory(rtn->packId, PACK_ID_LEN);
