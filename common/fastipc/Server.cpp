@@ -13,6 +13,7 @@ namespace fastipc{
 	};
 
 	void Server::close(void){
+		listener = NULL;
 		if (evtWrited) {// ¹Ø±ÕÊÂ¼þ¾ä±ú
 			HANDLE handle = evtWrited;
 			evtWrited = NULL;
