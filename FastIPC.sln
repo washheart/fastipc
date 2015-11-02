@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFastIPCClient", "TestFa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastIPC", "FastIPC\FastIPC.vcxproj", "{6BD8E842-723A-47BA-83A4-FA357465DC13}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastIPC_JNI", "FastIPC_JNI\FastIPC_JNI.vcxproj", "{759C69A5-2A94-48FF-B227-4C084A493C0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Debug|Win32.Build.0 = Debug|Win32
 		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Release|Win32.ActiveCfg = Release|Win32
 		{6BD8E842-723A-47BA-83A4-FA357465DC13}.Release|Win32.Build.0 = Release|Win32
+		{759C69A5-2A94-48FF-B227-4C084A493C0C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{759C69A5-2A94-48FF-B227-4C084A493C0C}.Debug|Win32.Build.0 = Debug|Win32
+		{759C69A5-2A94-48FF-B227-4C084A493C0C}.Release|Win32.ActiveCfg = Release|Win32
+		{759C69A5-2A94-48FF-B227-4C084A493C0C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
