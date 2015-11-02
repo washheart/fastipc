@@ -2,6 +2,7 @@
 *
 !.gitignore
 !FastIPC.dll
+!FastIPC_JNI.dll
 !TestFastIPCClient.exe
 !TestFastIPCServer.exe
 !readme.txt
