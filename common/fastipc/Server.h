@@ -5,6 +5,9 @@
 /// 即S1侦听C1的写事件，S2侦听C2的写事件。
 /// 服务端用法和流程如下：create、serListerner、startRead、close。
 ///  
+/// 源码：http://git.oschina.net/washheart/fastipc
+/// 源码：https://github.com/washheart/fastipc
+/// 说明：https://github.com/washheart/fastipc/wiki
 /// @version	1.0 
 /// @author		washheart@163.com
 /// @date       2015-10-22  

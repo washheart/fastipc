@@ -1,6 +1,9 @@
 //////////////////////////////////////////////////////////////////////////  
 /// 定义测试fatipc服务器与客户端通信时需要的窗口、变量、以及公共类
 ///  
+/// 源码：http://git.oschina.net/washheart/fastipc
+/// 源码：https://github.com/washheart/fastipc
+/// 说明：https://github.com/washheart/fastipc/wiki
 /// @version	1.0 
 /// @author		washheart@163.com
 /// @date       2015-10-22  

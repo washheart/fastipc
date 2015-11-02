@@ -1,6 +1,9 @@
 //////////////////////////////////////////////////////////////////////////  
 /// 定义fastipc用到的数据结构和变量  
-///  
+/// 
+/// 源码：http://git.oschina.net/washheart/fastipc
+/// 源码：https://github.com/washheart/fastipc
+/// 说明：https://github.com/washheart/fastipc/wiki 
 /// @version	1.0 
 /// @author		washheart@163.com
 /// @date       2015-05-16  

@@ -1,3 +1,12 @@
+/// JNI实现类
+/// 
+/// 源码：http://git.oschina.net/washheart/fastipc
+/// 源码：https://github.com/washheart/fastipc
+/// 说明：https://github.com/washheart/fastipc/wiki
+/// @version	1.0 
+/// @author		washheart@163.com
+/// @date       2015-10-31  
+////////////////////////////////////////////////////////////////////////// 
 #include "org_fastipc_FastIPCNative.h"
 #include "jni_jdk1_6_24/jni.h"
 #include "common/fastipc/Server.h"
@@ -170,52 +179,4 @@ JNIEXPORT void JNICALL Java_org_fastipc_FastIPCNative_nCloseClient
 (JNIEnv *, jclass, jint nativeClient){
 	fastipc::Client * client = (fastipc::Client *) nativeClient;
 	client->close();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// jni方法：退出JWebTop进程
-JNIEXPORT void JNICALL Java_org_fastipc_FastIPCNative_nExit
-(JNIEnv *, jclass){
-	printf("Java_org_fastipc_FastIPCNative_nExit \r\n");
-	//ExitJWebTop();
-}
-
-JNIEXPORT void JNICALL Java_a_A_a
-(JNIEnv *, jclass){
-	printf("Java_a_A_a \r\n");
-}
-
-
-//JNIEXPORT CServer * JNICALL Java_org_fastipc_FastIPCNative_create
-JNIEXPORT int JNICALL Java_org_fastipc_FastIPCNative_create
-(JNIEnv * env, jclass){
-	CServer *p = new CServer();
-	return (int)p;
-}
-
-JNIEXPORT void JNICALL Java_org_fastipc_FastIPCNative_setPort(JNIEnv *env, jobject clazz, CServer *obj, jint port)
-{
-	obj->port = port;
-}
-
-JNIEXPORT jint JNICALL Java_org_fastipc_FastIPCNative_getPort(JNIEnv *env, jobject clazz, CServer *obj)
-{
-	return obj->port;
 }
