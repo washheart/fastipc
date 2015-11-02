@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="FastIPC_JNI.cpp" />
+    <ClCompile Include="javautils.cpp">
+      <Filter>jniex</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="jni_jdk1_6_24">
+      <UniqueIdentifier>{91c878c8-c485-4f33-8e06-0c7acfd9515a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jniex">
+      <UniqueIdentifier>{187a0c20-af92-46bc-b3d5-e100aa4431dc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="org_fastipc_FastIPCNative.h" />
+    <ClInclude Include="jni_jdk1_6_24\jni.h">
+      <Filter>jni_jdk1_6_24</Filter>
+    </ClInclude>
+    <ClInclude Include="jni_jdk1_6_24\jni_md.h">
+      <Filter>jni_jdk1_6_24</Filter>
+    </ClInclude>
+    <ClInclude Include="javautils.h">
+      <Filter>jniex</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
