@@ -15,14 +15,6 @@
 #ifndef _Included_org_fastipc_FastIPCNative
 #define _Included_org_fastipc_FastIPCNative
 
-
-class CServer
-{
-private:
-public:
-	int port = 0;
-	CServer(){};
-};
 #ifdef __cplusplus
 extern "C" {
 #endif

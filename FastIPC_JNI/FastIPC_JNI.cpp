@@ -46,7 +46,6 @@ public:
 			 }
 		 }
 		 jstring packId = NULL;
-		 jstring data = NULL;
 		 if (memBlock->msgType != MSG_TYPE_NORMAL){
 			 string pid=memBlock->getPackId();
 			 packId = env->NewStringUTF(pid.c_str());
