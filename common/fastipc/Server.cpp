@@ -68,10 +68,8 @@ namespace fastipc{
 		return 0;
 	};
 
-
 	void Server::startRead(){
-		if (!evtWrited)return;
-		while (WaitForSingleObject(evtWrited, INFINITE) == WAIT_OBJECT_0){// 等待写完事件
+		while (evtWrited && (WaitForSingleObject(evtWrited, INFINITE) == WAIT_OBJECT_0)){// 等待写完事件
 			if (!evtWrited)break;
 			// 读取为单线程读取，所以不需要在设置state的前后进行状态位的检查
 			//if (memBuf->state != MEM_CAN_READ) continue;  // 当前共享区不是可读状态，可能正在使用，继续等待
@@ -82,20 +80,27 @@ namespace fastipc{
 				rtn = new MemBlock();
 				rtn->dataLen = memBuf->dataLen;
 				rtn->msgType = memBuf->msgType;
+				rtn->userMsgType = memBuf->userMsgType;
+				rtn->userValue = memBuf->userValue;
 				rtn->data = (char *)malloc(memBuf->dataLen);
 				memcpy(rtn->data, memBuf->data, rtn->dataLen);
+				int len = lstrlenA(memBuf->userShortStr);
+				ZeroMemory(rtn->userShortStr, PACK_ID_LEN);
+				if (len > 0){
+					memcpy(rtn->userShortStr, memBuf->userShortStr, len);
+				}
 				if (memBuf->msgType > MSG_TYPE_NORMAL){
 					ZeroMemory(rtn->packId, PACK_ID_LEN);
 					memcpy(rtn->packId, memBuf->packId, PACK_ID_LEN);
 				}
 				listener->onRead(rtn);
 				delete rtn;// 清理环境
-			}
-			catch (...){
+			} catch (...){
 				delete rtn;// 清理环境
 			}
-			InterlockedExchange(&memBuf->state, MEM_CAN_WRITE);// 数据读取之后，设置为可写
-			SetEvent(evtReaded);
+			// 多线程情况下，可能会出现server.close被调用后，还有线程在onRead，所以这里加个空指针检查
+			if (memBuf)InterlockedExchange(&memBuf->state, MEM_CAN_WRITE);// 数据读取之后，设置为可写
+			if (evtReaded)SetEvent(evtReaded);
 		}
 	};
 }
