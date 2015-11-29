@@ -11,21 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6BD8E842-723A-47BA-83A4-FA357465DC13}</ProjectGuid>
+    <ProjectGuid>{FDE79515-195F-4C3F-98EB-FB9D47839D9D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FastIPC</RootNamespace>
+    <RootNamespace>FastIPC_CSharp</RootNamespace>
+    <ProjectName>FastIPC_CSharp</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -51,7 +52,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USRDLL;FASTIPC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FASTIPC_JNI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -68,9 +69,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USRDLL;FASTIPC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FASTIPC_JNI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -84,18 +86,19 @@ copy   $(TargetPath) $(SolutionDir)\FastIPC_CSharp_Lib\bin\$(Configuration)\$(Pr
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\fastipc\Client.cpp" />
-    <ClCompile Include="..\common\fastipc\FastIPC.cpp" />
-    <ClCompile Include="..\common\fastipc\Server.cpp" />
-    <ClCompile Include="..\common\util\StrUtil.cpp" />
+    <ClInclude Include="fastipc_4csharp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\common\fastipc\Client.h" />
-    <ClInclude Include="..\common\fastipc\FastIPC.h" />
-    <ClInclude Include="..\common\fastipc\Server.h" />
-    <ClInclude Include="..\common\util\StrUtil.h" />
+    <ClCompile Include="fastipc_4csharp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\JWebTop_DLL\JWebTop_DLL.vcxproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FastIPC\FastIPC.vcxproj">
+      <Project>{6bd8e842-723a-47ba-83a4-fa357465dc13}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

@@ -28,6 +28,7 @@ namespace fastipc{
 		virtual void onRead(MemBlock* memBlock){}
 	};
 
+	template  class __declspec(dllexport) std::map < std::string, MemBlock* >;
 	// 已经将数据进行了组装，不用考虑其他的了
 	class _declspec(dllexport) RebuildedBlockListener :public ReadListener{
 	private:
