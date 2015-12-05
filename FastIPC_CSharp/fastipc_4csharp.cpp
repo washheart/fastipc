@@ -50,7 +50,9 @@ public:
 		data = (char *)malloc(len);
 		memcpy(data, memBlock->data, len);
 
-		g_CSharpCallBack(memBlock->msgType, packId, data);
+		g_CSharpCallBack(memBlock->msgType, packId, data, len);
+		delete data;
+		if (packId)delete packId;
 	}
 };
 

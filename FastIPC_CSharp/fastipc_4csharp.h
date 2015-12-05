@@ -6,7 +6,6 @@
 #define EXPORT __declspec(dllexport)
 
 extern "C" {
-
 	/*
 	* 该方法用于创建一个fastipc服务端
 	* serverName	服务端名称
@@ -16,9 +15,8 @@ extern "C" {
 	*/
 	EXPORT long WINAPI nCreateServer(LPTSTR serverName, int blockSize,int& result);
 
-	EXPORT void WINAPI nAbc();
 	// 定义一个回调函数，csharp端实现此回调函数
-	typedef char*(CALLBACK *CSharpCallBack)(int msgType, char* packId, char* data);
+	typedef void *(CALLBACK *CSharpCallBack)(int msgType, char* packId, char* data, int dataLen);
 
 	/*
 	* 该方法用于开启fastipc服务端的读取侦听，成功后会阻塞在此处
