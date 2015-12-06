@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -70,16 +71,7 @@ namespace org {
 
             private delegate void CSharpCallBack(int msgType, IntPtr packId, IntPtr data, int dataLen);  // 声明回调函数原型   
 
-            public static string ptr2string(IntPtr ptr) {
-                if (ptr.ToInt32() == 0) return "";
-                string s_unicode = Marshal.PtrToStringUni(ptr);
-                byte[] buffer = Encoding.Unicode.GetBytes(s_unicode);
-                string rtn = Encoding.UTF8.GetString(buffer);
-                int idx = rtn.IndexOf((char)0);
-                if (idx >= 0) rtn = rtn.Substring(0, idx);
-                return rtn;
-            }
-           
+
             public static void startRead(int nativeServer, FastIPCReadListener listener) {
                 nStartRead(nativeServer, listener.OnRead);
             }
@@ -125,6 +117,34 @@ namespace org {
 
             public static void closeClient(int nativeClient) {
                 nCloseClient(nativeClient);
+            }
+
+            // 将字符串指针对应数据写入到数据流中，主要用于分段传输的数据的拼接
+            public static void readPtr(Stream bos, IntPtr ptr, int dataLen) {
+                if (ptr.ToInt32() == 0) return;
+                byte[] data = new byte[dataLen];
+                Marshal.Copy(ptr, data, 0, dataLen);
+                bos.Write(data, 0, dataLen);
+            }
+
+            // 将字符串指针转换为字符串：读取时只读取指定长度的数据
+            public static string ptr2string(IntPtr ptr, int dataLen) {
+                if (ptr.ToInt32() == 0) return "";
+                byte[] data = new byte[dataLen];
+                Marshal.Copy(ptr, data, 0, dataLen);
+                string rtn = Encoding.UTF8.GetString(data);
+                return rtn;
+            }
+
+            // 将字符串指针转换为字符串：一次性将指针对应的全部数据读完
+            public static string ptr2string(IntPtr ptr) {
+                if (ptr.ToInt32() == 0) return "";
+                string s_unicode = Marshal.PtrToStringUni(ptr);
+                byte[] buffer = Encoding.Unicode.GetBytes(s_unicode);
+                string rtn = Encoding.UTF8.GetString(buffer);
+                int idx = rtn.IndexOf((char)0);
+                if (idx >= 0) rtn = rtn.Substring(0, idx);
+                return rtn;
             }
         }
     }

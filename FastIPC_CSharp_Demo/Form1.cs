@@ -25,47 +25,14 @@ namespace JWebTop_CSharp_Demo {
             InitializeComponent();
         }
 
-        public class MYReadListener : org.fastipc.FastIPCReadListener {
-            private Dictionary<String, Stream> caches = new Dictionary<String, Stream>();
-            MainForm mainFrame;
+        public class MYReadListener : org.fastipc.RebuildedBlockListener {
+              MainForm mainFrame;
             public MYReadListener(MainForm f) {
                 this.mainFrame = f;
             }
-            public static string ptr2string(IntPtr ptr,int dataLen) {
-                if (ptr.ToInt32() == 0) return "";
-                byte[] data = new byte[dataLen];
-                Marshal.Copy(ptr, data, 0, dataLen);
-                string rtn = Encoding.UTF8.GetString(data);
-                return rtn;
-            }
-            public static void readPtr(Stream bos, IntPtr ptr, int dataLen) {
-                if (ptr.ToInt32() == 0) return;
-                byte[] data = new byte[dataLen];
-                Marshal.Copy(ptr, data, 0, dataLen);
-                bos.Write(data, 0, dataLen);
-            }
-            public void OnRead(int msgType, IntPtr _packId, IntPtr data, int dataLen) {
-                string packId = FastIPCNative.ptr2string(_packId);
-                if (msgType == FastIPCNative.MSG_TYPE_NORMAL) {
-                    mainFrame.received(ptr2string(data, dataLen));
-                } else {                   
-                    Stream bos = null;
-                    if (caches.ContainsKey(packId)) {
-                        bos = caches[packId];
-                    } else {
-                        bos = new MemoryStream();
-                        caches.Add(packId, bos);
-                    }
-                    readPtr(bos, data, dataLen);
-                    if (msgType == FastIPCNative.MSG_TYPE_END) {
-                        caches.Remove(packId);
-                        byte[] bytes = new byte[bos.Length];
-                        bos.Position = 0; // 设置当前流的位置为流的开始
-                        bos.Read(bytes, 0, bytes.Length);
-                        string rtn = Encoding.UTF8.GetString(bytes);
-                        mainFrame.received(rtn);
-                    }
-                }
+           
+            public override void OnRead(String data) {
+                mainFrame.received(data);               
             }
         }
 
@@ -114,7 +81,7 @@ namespace JWebTop_CSharp_Demo {
                 SetTextCallback d = new SetTextCallback(received);
                 this.Invoke(d, new object[] { data });
             } else {
-                txtReceived.Text += "接收 " + data + "\r\n";
+                txtReceived.Text += "\r\n接收 " + data ;
             }
 		}
        
@@ -126,7 +93,7 @@ namespace JWebTop_CSharp_Demo {
                 client.create(FastIPCNative.genServerName(serverName), blockSize);
             }
             client.write(txtMsg.Text);
-            txtSended.Text += "发送 " + txtMsg.Text + "\r\n";
+            txtSended.Text += "\r\n发送 " + txtMsg.Text;
         }
         private void btnCleanSended_Click(object sender, EventArgs e) {
             txtSended.Text = "";
