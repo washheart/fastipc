@@ -26,13 +26,13 @@ namespace JWebTop_CSharp_Demo {
         }
 
         public class MYReadListener : org.fastipc.RebuildedBlockListener {
-              MainForm mainFrame;
+            MainForm mainFrame;
             public MYReadListener(MainForm f) {
                 this.mainFrame = f;
             }
-           
+
             public override void OnRead(String data) {
-                mainFrame.received(data);               
+                mainFrame.received(data);
             }
         }
 
@@ -75,17 +75,16 @@ namespace JWebTop_CSharp_Demo {
 
             // string Result = p.StandardOutput.ReadToEnd();// 这里会造成线程等待
         }
+
         delegate void SetTextCallback(string text);
         public void received(String data) {
-            if (this.txtReceived.InvokeRequired) {
+            if (this.txtReceived.InvokeRequired) {// 跨线程操作界面时需要采用回调方式
                 SetTextCallback d = new SetTextCallback(received);
                 this.Invoke(d, new object[] { data });
             } else {
-                txtReceived.Text += "\r\n接收 " + data ;
+                txtReceived.Text += "\r\n接收 " + data;
             }
-		}
-       
-
+        }
 
         protected void wrtieMsgTo() {
             if (client == null) {
@@ -95,6 +94,7 @@ namespace JWebTop_CSharp_Demo {
             client.write(txtMsg.Text);
             txtSended.Text += "\r\n发送 " + txtMsg.Text;
         }
+
         private void btnCleanSended_Click(object sender, EventArgs e) {
             txtSended.Text = "";
         }
@@ -106,6 +106,5 @@ namespace JWebTop_CSharp_Demo {
         private void btnSendMsg_Click(object sender, EventArgs e) {
             wrtieMsgTo();
         }
-
     }
 }

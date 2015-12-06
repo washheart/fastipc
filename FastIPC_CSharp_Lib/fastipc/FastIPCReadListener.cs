@@ -26,7 +26,9 @@ namespace org {
 	         *            传递的消息具体内容，注意消息可能是分段的，此时需要根据packId进行组装
 	         */
             void OnRead(int msgType, IntPtr packId, IntPtr data, int dataLen);
-        }
+        }// End FastIPCReadListener class
+
+        // 提供一个完成了分段数据组装的抽象类，对不是太大的数据免除自己用流组织数据的麻烦
         public abstract class RebuildedBlockListener : org.fastipc.FastIPCReadListener {
             private Dictionary<String, Stream> caches = new Dictionary<String, Stream>();
 
@@ -55,7 +57,6 @@ namespace org {
                     }
                 }
             }
-        }
-
-    }
-}
+        }// End RebuildedBlockListener class
+    }// End fastipc namespace
+}// End org namespace
