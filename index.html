@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Fastipc by washheart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Fastipc</h1>
+      <h2 class="project-tagline">在Windows下基于共享内存实现进程间通信</h2>
+      <a href="https://github.com/washheart/fastipc" class="btn">View on GitHub</a>
+      <a href="https://github.com/washheart/fastipc/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/washheart/fastipc/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h3>
+<a id="fastipc原理说明" class="anchor" href="#fastipc%E5%8E%9F%E7%90%86%E8%AF%B4%E6%98%8E" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FastIPC原理说明</h3>
+
+<p>通过共享内存实现两个或多个进程进行数据的共享，要定义一个数据结构(MemBuf)。
+通过两个自定义Windows事件(evtWrited/evtReaded)，实现读写完成的通知。
+在共享数据结构中保存一个状态位(MemBuf.state)：记录当前内存状态，控制是否可读写。
+利用数组是共享数据结构最后一个字段(MemBuf.data)的特点，实现可配置缓存区大小。
+当传输数据大于缓存区大小时，会分段传输，此时会设置共享数据结构中数据的类型(MemBuf.msgType)和重组数据用的字段(MemBuf.packId)。
+服务端启动后，需要调用侦听方法(Server.startRead)，此时服务端阻塞在侦听方法内，直到有客户端写入数据后触发evtReaded事件。
+客户端创建后，直接写数据(Client.write)即可。
+服务端收到数据后，会从共享数据中读取数据生成分发用的数据(MemBlock)，并分发(Server.listener.onRead)数据，分发后服务端会自行#清理创建的分发数据。</p>
+
+<h3>
+<a id="fastipc例子说明" class="anchor" href="#fastipc%E4%BE%8B%E5%AD%90%E8%AF%B4%E6%98%8E" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FastIPC例子说明</h3>
+
+<p>首先需要编译好TestFastIPCServer、TestFastIPCClient、FastIPC三个项目
+单击TestFastIPCServer后启动服务端。此时，服务端会进行一下操作：
+创建Server。这一步可以更改下blockSize以便验证数据分段传输。
+启动客户端（在TestFastIPCServer.exe所在目录的TestFastIPCClient.exe并启动）
+客户端自动启动后，会执行一下操作：
+从命令行解析serverName和blockSize参数
+创建客户端
+创建客户端的服务端(S2)，以便接收TestFastIPCServer发送的数据
+界面操作：服务端和客户端的界面是一样的（除了标题）。通过“发送消息”按钮进行数据的发送。</p>
+
+<h3>
+<a id="使用fastipc" class="anchor" href="#%E4%BD%BF%E7%94%A8fastipc" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用FastIPC</h3>
+
+<p>1、添加对FastIPC.dll和FastIPC.lib的引用<br>
+2、将common/fastipc目录下头文件添加到项目。<br>
+3、创建服务器<br></p>
+
+<pre>
+    fastipc::Server server;     // IPC服务端
+    serverName = fastipc::genServerName();//指定服务名称，这里是uuid
+    DWORD blockSize=1024;// 指定缓存区的大小
+    server.create(serverName, blockSize);// 创建服务端
+    // 设置侦听器，以便对收到的数据进行处理
+    // MyReadListener是fastipc::ReadListener的实现类
+    server.setListener(new MyReadListener());
+    server.startRead();// 开始接收数据，此方法会阻塞当前线程
+</pre>
+
+<p>4、创建客户端<br></p>
+
+<pre>
+    fastipc::Client client;  // IPC客户端
+    // 创建服务端，serverName和blockSize要与服务端保持一致
+    client.create(serverName, blockSize);   
+</pre>
+
+<p>5、客户端发数据给服务器<br></p>
+
+<pre>
+    std::string s ="这是来自客户端的消息";
+    client.write(LPSTR(s.c_str()), s.size());// 发送消息到服务端
+6、服务器接收并处理消息<br>
+    // 定义数据处理类
+    class MyReadListener :public fastipc::ReadListener{
+        void onRead(fastipc::MemBlock* readed) override{            
+             if (readed-&gt;dataLen &gt; 0){
+                   // 根据readed-&gt;data和readed-&gt;dataLen读取有效数据
+                   // 根据readed-&gt;msgType判断是完整数据，还是部分数据
+                   // 如果是部分数据，根据readed-&gt;packId将数据重组在一起
+              }
+              // delete readed;// readed在分发后会由服务器销毁，外部调用者无需清理操作 
+        }
+    }
+</pre>
+
+<p>7、服务器发数据给客户端<br></p>
+
+<pre>
+    服务器没有发送数据给客户端的方法，如果需要，按下列步骤处理：
+    1) 在客户端建立新的服务端(S2)
+    2) 在服务端建立与S2对应的客户端(C2)，注意serverName和blockSize要与S2一致
+    3) 使用C2与S2通信
+ </pre>   
+
+### 在Java中使用FastIPC
+Y<pre>
+    // 加载dll
+    System.loadLibrary("FastIPC_JNI");
+    。。。。。。。。。。。。
+
+    // 创建服务端
+    this.server = new FastIPCServer();
+    this.serverName = FastIPCNative.genServerName();
+    this.blockSize = 5;
+    server.create(serverName, blockSize);
+    server.setListener(new FastIPCReadListener(){
+        @Override
+    public void OnRead(int msgType, String packId, byte[] data) {
+       System.out.println("msgType = " + msgType 
+                          + " packId = " + packId
+                          +" data = " + new String(data, "utf-8"));
+    }
+    });
+    new Thread() {
+       @Override
+       public void run() {
+          server.startRead();
+       }
+    }.start();
+
+    。。。。。。。。。。。。
+    // 创建客户端
+    client = new FastIPCClient();
+    client.create(FastIPCNative.genServerName(this.serverName), this.blockSize);
+    client.write(“客户端建好了。。。。”);// 发送数据
+</pre>
+
+<p>Java建立的Server/Client可以和C++等进程建立的Server/Client进行交互通信</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/washheart/fastipc">Fastipc</a> is maintained by <a href="https://github.com/washheart">washheart</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
